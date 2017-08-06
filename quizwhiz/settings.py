@@ -37,6 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'easy_thumbnails',
+    'mptt',
+    'filer',
+    'ckeditor',
+    'ckeditor_filebrowser_filer',
+    'gfklookupwidget',
+
     'quizard',
 ]
 
@@ -108,6 +116,27 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# +------------------------------------------------------------------------------------------------+
+# |                                                                                                |
+# |                Local settings. Don't declare any settings beyond this point.                   |
+# |                                                                                                |
+# +------------------------------------------------------------------------------------------------+
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar_Full': [
+            ['Styles', 'Format', 'Bold', 'Italic', 'Underline', 'Strike', 'SpellChecker', 'Undo',
+             'Redo'],
+            ['Link', 'Unlink', 'Anchor'],
+            ['FilerImage', 'Iframe', 'Table', 'HorizontalRule'],
+            ['TextColor', 'BGColor'],
+            ['Smiley', 'SpecialChar'], ['Source'],
+        ],
+        'toolbar': 'Full',
+        'height': 200,
+        'extraPlugins': 'filerimage',
+    }
+}
 
 # +------------------------------------------------------------------------------------------------+
 # |                                                                                                |

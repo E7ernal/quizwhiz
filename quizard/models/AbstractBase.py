@@ -3,12 +3,15 @@
 __author__ = 'zach.mott@gmail.com'
 
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 
 class AbstractBase(models.Model):
-    created = models.DateTimeField(auto_now_add=True)
-    last_modified = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey('auth.User', verbose_name=_('Created by'))
+
+    created = models.DateTimeField(_('Created on'), auto_now_add=True)
+    last_modified = models.DateTimeField(_('Last modified'), auto_now=True)
 
     class Meta:
-        app_name = 'quizard'
+        app_label = 'quizard'
         abstract = True
