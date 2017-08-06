@@ -15,7 +15,9 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+from quizard.views.Mainpage import main
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^quizwhiz/', main)
 ]
