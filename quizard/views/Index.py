@@ -7,8 +7,11 @@ from django.shortcuts import redirect
 
 from quizard.forms import AssignmentSearchForm
 
+from NavLocationMixin import NavLocationMixin
 
-class Index(generic.FormView):
+
+class Index(NavLocationMixin, generic.FormView):
+    location = 'index'
     form_class = AssignmentSearchForm
     template_name = 'quizard/index.html'
 

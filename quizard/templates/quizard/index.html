@@ -3,9 +3,17 @@
 
 
 {% block content %}
-  <form method="post" action=".">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button>{% trans "Submit" %}</button>
-  </form>
+  <div class="jumbotron">
+    <div class="container">
+      <h1>Welcome to QuizWhiz</h1>
+      <p>
+        Enter your assignment code or school and teacher name combination to get started.
+      </p>
+    </div>
+  </div>
+  <div class="container">
+    <div class="row col-md-6 col-push-3">
+      {% include 'quizard/partials/form.html' with form=form method="post" action="." %}
+    </div>
+  </div>
 {% endblock content %}

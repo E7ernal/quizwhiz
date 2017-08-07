@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'ckeditor',
     'ckeditor_filebrowser_filer',
     'gfklookupwidget',
+    'widget_tweaks',
 
     'quizard',
 ]

@@ -1,0 +1,20 @@
+{% load i18n %}
+
+<form action="{{ action }}" method="{{ method|default:'post' }}">
+
+  {% for error in form.non_field_errors %}
+    <div class="alert alert-danger">
+      <i class="glyphicon glyphicon-exclamation-sign"></i> {{ error }}
+    </div>
+  {% endfor %}
+
+  {% csrf_token %}
+  {% for field in form %}
+    {% include 'quizard/partials/form_field.html' with field=field %}
+  {% endfor %}
+
+  <div class="form-group">
+    <button class="btn btn-success">{% trans "Submit" %}</button>
+  </div>
+
+</form>

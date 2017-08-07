@@ -1,0 +1,22 @@
+{% load i18n %}
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="{% url 'index' %}">{% trans 'QuizWhiz' %}</a>
+    </div>
+
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li {% if location == 'index' %}class="active"{% endif %}>
+          <a class="nav-link" href="{% url 'index' %}">{% trans 'Home' %}</a>
+        </li>
+        <li {% if location == 'about' %}class="active"{% endif %}>
+          <a class="nav-link" href="{% url 'about' %}">{% trans 'About' %}</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+
+</nav>
