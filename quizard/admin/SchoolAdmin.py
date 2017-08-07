@@ -10,3 +10,9 @@ from quizard.admin.AbstractBaseAdmin import AbstractBaseAdmin
 
 class SchoolAdmin(AbstractBaseAdmin):
     search_fields = ['name']
+
+    fieldsets = [
+        (None, {
+            'fields': ['name']
+        })
+    ] + AbstractBaseAdmin.fieldsets
