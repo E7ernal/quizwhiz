@@ -12,6 +12,11 @@ class AssignmentList(generic.ListView):
     context_object_name = 'assignments'
     template_name = 'quizard/assignment_list.html'
 
+    def get_context_data(self, **kw):
+        context = super(AssignmentList, self).get_context_data(**kw)
+        context.update(self.kwargs)
+        return context
+
     def get_queryset(self):
         queryset = super(AssignmentList, self).get_queryset()
 
