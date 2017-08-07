@@ -22,14 +22,19 @@ class AssignmentQuestionInline(admin.TabularInline):
 class AssignmentAdmin(AbstractBaseAdmin):
     inlines = [AssignmentQuestionInline]
 
-    search_fields = ['school__name', 'code']
+    save_as = True
+
+    search_fields = ['name', 'school__name', 'code']
     list_filter = ['school__name', 'is_private', 'created', 'created_by__username']
 
-    list_display = ['code', 'school', 'num_questions', 'is_private', 'created_by', 'created']
+    list_display = [
+        'name', 'code', 'school', 'num_questions',
+        'is_private', 'created_by', 'created'
+    ]
 
     fieldsets = [
         (_('Assignment configuration'), {
-            'fields': ['school', 'code', 'is_private']
+            'fields': ['school', 'name', 'code', 'is_private']
         }),
         (_('About this assignment'), {
             'fields': ['summary', 'description']

@@ -37,6 +37,7 @@ class AssignmentQuestion(AbstractBase):
         verbose_name = _('Assignment question')
         verbose_name_plural = _('Assignment questions')
         ordering = ['index']
+        unique_together = ('question_type', 'question_id', 'assignment')
 
     def __str__(self):
         return "{self.assignment}: {self.question_type.model} #{self.index}".format(self=self)

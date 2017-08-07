@@ -16,6 +16,7 @@ from quizard.models import AbstractBase
 class Assignment(AbstractBase):
     school = models.ForeignKey('quizard.School', verbose_name=_('School'), blank=True, null=True)
 
+    name = models.CharField(_('Name'), max_length=255)
     code = models.CharField(_('Code'), max_length=16, unique=True)
     summary = RichTextField(_('Summary'), blank=True)
     description = RichTextField(_('Description'), blank=True)
@@ -26,9 +27,7 @@ class Assignment(AbstractBase):
         verbose_name_plural = _('Assignments')
 
     def __str__(self):
-        if self.school is not None:
-            return "{self.code} / {self.school}".format(self=self)
-        return "{self.code}".format(self=self)
+        return self.name
 
     @cached_property
     def num_questions(self):

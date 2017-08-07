@@ -18,12 +18,14 @@ class BaseQuestion(AbstractBase):
     """
     created_by = models.ForeignKey('auth.User', verbose_name=_('Created by'))
 
+    title = models.CharField(_('Title'), max_length=255)
     point_value = models.PositiveIntegerField(_('Point value'))
     explanation = RichTextField(_('Explanation'))
     html = RichTextField(_('Question text'))
 
     class Meta:
         abstract = True
+        unique_together = ('title', 'created_by')
 
     def __str__(self):
-        return "{self.__class__.__name__} #{self.pk} ({self.point_value} point(s))".format(self=self)
+        return self.title

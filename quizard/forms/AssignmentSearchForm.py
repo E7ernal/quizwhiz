@@ -11,8 +11,8 @@ class AssignmentSearchForm(forms.Form):
     INVALID_INPUT_COMBO_MSG = _('Please provide an assignment code or '
                                 'a teacher and a school, but not both.')
 
-    teacher = forms.CharField(max_length=64, required=False)
     school = forms.CharField(max_length=64, required=False)
+    teacher = forms.CharField(max_length=64, required=False)
     code = forms.CharField(max_length=16, required=False)
 
     def clean(self):

@@ -22,11 +22,11 @@ class MultipleChoiceQuestionAdmin(AbstractBaseAdmin):
     inlines = [MultipleChoiceAnswerInline]
 
     list_filter = ['created']
-
-    list_display = ['__str__', 'point_value']
+    list_display = ['title', 'created_by', 'point_value']
+    search_fields = ['title']
 
     fieldsets = [
         (None, {
-            'fields': ['point_value', 'html', 'explanation']
+            'fields': ['title', 'point_value', 'html', 'explanation']
         })
     ] + AbstractBaseAdmin.fieldsets
