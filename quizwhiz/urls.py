@@ -16,11 +16,9 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls import url, include
 
-from quizard.views.Mainpage import main
-
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^quizwhiz/', main),
     url(r'^filebrowser_filer/', include('ckeditor_filebrowser_filer.urls')),
+    url(r'^', include('quizard.urls')),
 ]
