@@ -1,19 +1,20 @@
 {% extends 'quizard/base.html' %}
 
 {% block content %}
+  <div class="row">
   {% if assignments %}
-    <ul>
+    <div class="list-group">
       {% for assignment in assignments %}
-        <li>
-          <a href="{% url 'assignment' code=assignment.code %}">
-            {{ assignment.code }}
-          </a>
-        </li>
+        <a class="list-group-item" href="{% url 'assignment' code=assignment.code %}">
+          <h2>{{ assignment.code }} - {{ assignment.name }} ({{ assignment.num_questions }} questions)</h2>
+          <div class="assignment-summary">{{ assignment.summary | safe }}</div>
+        </a>
       {% endfor %}
-    </ul>
+    </div>
   {% else %}
-    <p>
+    <p class="lead">
       Sorry, we didn't find any assignments for {{ school }} / {{ teacher }}.
     </p>
   {% endif %}
+  </div>
 {% endblock content %}

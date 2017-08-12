@@ -3,3 +3,13 @@ body {
   padding-top: 50px;
   padding-bottom: 20px;
 }
+
+.row {
+  padding: 1em;
+}
+
+.assignment-summary {
+  font-size: 1.5em;
+}
+
+

@@ -28,8 +28,10 @@ class FreeResponseQuestionAdmin(AbstractBaseAdmin):
 
     fieldsets = [
         (None, {
-            'fields': ['title', 'point_value', 'html', 'explanation']
+            'fields': ['title', 'slug', 'point_value', 'html', 'explanation']
         })
     ] + AbstractBaseAdmin.fieldsets
+
+    prepopulated_fields = {'slug': ('title',)}
 
 

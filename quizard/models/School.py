@@ -15,6 +15,7 @@ from quizard.models.AbstractBase import AbstractBase
 @python_2_unicode_compatible
 class School(AbstractBase):
     name = models.CharField(_('Name'), max_length=255, unique=True)
+    slug = models.SlugField(_('Slug'), max_length=255, unique=True)
     pretty_name = RichTextField(_('Pretty name'), blank=True)
 
     class Meta:

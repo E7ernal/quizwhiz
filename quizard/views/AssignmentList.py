@@ -21,6 +21,6 @@ class AssignmentList(generic.ListView):
         queryset = super(AssignmentList, self).get_queryset()
 
         return queryset.filter(
-            school__name__iexact=self.kwargs['school'],
+            school__slug__iexact=self.kwargs['school'],
             created_by__last_name__iexact=self.kwargs['teacher']
         )

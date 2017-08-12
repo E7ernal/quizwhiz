@@ -9,7 +9,8 @@ from quizard import views
 
 urlpatterns = [
     url(r'^$', views.Index.as_view(), name='index'),
-    url(r'^about/?$', views.About.as_view(), name='about'),
-    url(r'^assignment/(?P<code>\w+)/?', views.Assignment.as_view(), name='assignment'),
-    url(r'^assignments/(?P<school>[\w\s]+)/(?P<teacher>\w+)/?$', views.AssignmentList.as_view(), name='assignments'),
+    url(r'^about$', views.About.as_view(), name='about'),
+    url(r'^assignment/(?P<code>\w+)$', views.Assignment.as_view(), name='assignment'),
+    url(r'^assignment/(?P<code>\w+)/question/(?P<question_slug>[\w_-]+)?$', views.Question.as_view(), name='question'),
+    url(r'^assignments/(?P<school>[\w_-]+)/(?P<teacher>\w+)$', views.AssignmentList.as_view(), name='assignments'),
 ]

@@ -4,6 +4,7 @@ __authors__ = "Zach Mott, David Fox, Jason Dunn"
 
 from django.views import generic
 from django.shortcuts import redirect
+from django.utils.text import slugify
 
 from quizard.forms import AssignmentSearchForm
 
@@ -23,6 +24,6 @@ class Index(NavLocationMixin, generic.FormView):
         if code:
             return redirect('assignment', code=code)
         elif school and teacher:
-            return redirect('assignments', school=school, teacher=teacher)
+            return redirect('assignments', school=slugify(school), teacher=teacher.lower())
         else:
             return redirect('index')

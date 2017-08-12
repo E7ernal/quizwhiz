@@ -1,0 +1,11 @@
+{% extends 'quizard/base.html' %}
+{% load i18n %}
+
+{% block content %}
+  <div class="row">
+    <h1>{{ question.title }}</h1>
+    <p class="lead">{{ question.html | safe }}</p>
+  </div>
+  <div class="row">
+  </div>
+{% endblock content %}

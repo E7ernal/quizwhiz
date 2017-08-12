@@ -2,6 +2,8 @@
 
 __author__ = 'zach.mott@gmail.com'
 
+import random
+
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.functional import cached_property
@@ -33,3 +35,37 @@ class Assignment(AbstractBase):
     def num_questions(self):
         return self.questions.count()
     num_questions.short_description = _('Number of questions')
+
+    def get_question(self, question_slug=None, exclude=None):
+        if question_slug is None:
+            return self.get_random_question(exclude=exclude)
+        else:
+            return self.get_question_by_slug(question_slug)
+
+    def get_question_by_slug(self, question_slug):
+        """
+        Get a particular question, as identified by the question_slug.
+        Raises ObjectDoesNotExist if the question that slug is not
+        related to this Assignment.
+        """
+        return self.questions.get(proxy__slug=question_slug).question
+
+    def get_random_question(self, exclude=None):
+        """
+        Gets a random question. exclude is a list of question PKs that
+        will be excluded from consideration. Returns None if there are
+        no unexcluded questions to make a selection from.
+        """
+        exclude = exclude or []
+        # Regrettably, Django's ORM won't let us do self.questions.exclude
+        # with a GenericRelation, so we need to do some list wrangling
+        # arithmetic in Python.
+        question_pool = filter(
+            lambda question: question.pk not in exclude,
+            [assignmentquestion.question for assignmentquestion in self.questions.all()]
+        )
+
+        try:
+            return random.choice(question_pool)
+        except IndexError:
+            return None

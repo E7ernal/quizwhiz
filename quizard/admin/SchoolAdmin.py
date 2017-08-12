@@ -13,6 +13,8 @@ class SchoolAdmin(AbstractBaseAdmin):
 
     fieldsets = [
         (None, {
-            'fields': ['name']
+            'fields': ['name', 'slug']
         })
     ] + AbstractBaseAdmin.fieldsets
+
+    prepopulated_fields = {'slug': ('name',)}
