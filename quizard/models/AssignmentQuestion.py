@@ -12,8 +12,20 @@ from gfklookupwidget.fields import GfkLookupField
 from quizard.models.AbstractBase import AbstractBase
 
 
+class AssignmentQuestionManager(models.Manager):
+    def get_queryset(self):
+        return super(AssignmentQuestionManager, self).get_queryset().prefetch_related('question')
+
+
 @python_2_unicode_compatible
 class AssignmentQuestion(AbstractBase):
+    # When asked for one of these properties, AssignmentQuestion will
+    # proxy the attribute request to its underlying question.
+    proxied_properties = [
+        'title', 'slug', 'point_value', 'explanation',
+        'html', 'answer_template', 'answers', 'validate_answer',
+    ]
+
     assignment = models.ForeignKey(
         'quizard.Assignment',
         verbose_name=_('Assignment'),
@@ -33,6 +45,8 @@ class AssignmentQuestion(AbstractBase):
     question_id = GfkLookupField('question_type', _('Question ID'))
     question = GenericForeignKey('question_type', 'question_id')
 
+    objects = AssignmentQuestionManager()
+
     class Meta:
         verbose_name = _('Assignment question')
         verbose_name_plural = _('Assignment questions')
@@ -41,3 +55,9 @@ class AssignmentQuestion(AbstractBase):
 
     def __str__(self):
         return "{self.assignment}: {self.question_type.model} #{self.index}".format(self=self)
+
+    def __getattribute__(self, item):
+        supercall = super(AssignmentQuestion, self).__getattribute__
+        if item in supercall('proxied_properties'):
+            return getattr(self.question, item)
+        return supercall(item)

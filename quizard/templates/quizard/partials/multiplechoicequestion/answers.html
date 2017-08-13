@@ -1,0 +1,5 @@
+<div class="list-group">
+  {% for answer in answers %}
+    {% include 'quizard/partials/multiplechoicequestion/answer.html' with answer=answer %}
+  {% endfor %}
+</div>

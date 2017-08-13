@@ -1,0 +1,69 @@
+/* Move down content because we have a fixed navbar that is 50px tall */
+body {
+  padding-top: 50px;
+  padding-bottom: 20px;
+}
+
+.glyphicon-spin {
+    -webkit-animation: glyphicon-spin 2000ms infinite linear;
+    animation: glyphicon-spin 2000ms infinite linear;
+}
+
+@-moz-keyframes glyphicon-spin
+{
+    from
+    {
+        -moz-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to
+    {
+        -moz-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+@-webkit-keyframes glyphicon-spin
+{
+    from
+    {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to
+    {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes glyphicon-spin
+{
+    from
+    {
+        -wekbit-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to
+    {
+        -webkit-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+.row {
+  padding: 1em;
+}
+
+.assignment-summary {
+  font-size: 1.5em;
+}
+
+.freeresponse-answer {
+  color: #333333;
+  width: 100% !important;
+}
+
+

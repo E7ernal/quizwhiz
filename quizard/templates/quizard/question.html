@@ -1,11 +1,47 @@
 {% extends 'quizard/base.html' %}
-{% load i18n %}
+{% load i18n quizard %}
 
 {% block content %}
+  {% include 'quizard/partials/progress_bar.html' %}
+
   <div class="row">
-    <h1>{{ question.title }}</h1>
-    <p class="lead">{{ question.html | safe }}</p>
+    <h1>
+      {{ question.title }} {% blocktrans with points=question.point_value %}({{ points }} points){% endblocktrans %}
+    </h1>
+    <div class="well">
+      <p class="lead">{{ question.html | safe }}</p>
+    </div>
   </div>
   <div class="row">
+    {% render_answers question %}
   </div>
+  <div class="row">
+    <button class="submit-answer btn btn-success" style="display: none;"
+            data-toggle="modal" data-target="#answer-modal" data-backdrop="static" data-keyboard="false">
+      <span>{% trans 'Submit answer' %}</span>
+      <i class="glyphicon glyphicon-refresh glyphicon-spin" style="display: none;"></i>
+    </button>
+  </div>
+
+  {% include 'quizard/partials/progress_bar.html' %}
+
+  <div id="answer-modal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1>{% trans 'Explanation' %}</h1>
+        </div>
+        <div class="modal-body">
+          {{ question.explanation | safe }}
+        </div>
+        <div class="modal-footer">
+          <input id="answer" type="hidden" name="answer" value="" />
+          <a id="next-question" href="" class="btn btn-success">
+            {% trans 'Next question' %}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
 {% endblock content %}

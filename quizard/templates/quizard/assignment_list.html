@@ -6,8 +6,8 @@
     <div class="list-group">
       {% for assignment in assignments %}
         <a class="list-group-item" href="{% url 'assignment' code=assignment.code %}">
-          <h2>{{ assignment.code }} - {{ assignment.name }} ({{ assignment.num_questions }} questions)</h2>
-          <div class="assignment-summary">{{ assignment.summary | safe }}</div>
+          <h2 class="list-group-item-heading">{{ assignment.code }} - {{ assignment.name }} ({{ assignment.num_questions }} questions)</h2>
+          <div class="list-group-item-text">{{ assignment.summary | safe }}</div>
         </a>
       {% endfor %}
     </div>

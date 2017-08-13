@@ -4,10 +4,12 @@
 {% block content %}
   <div class="row">
     <h1>{{ assignment.code }} - {{ assignment.name }}</h1>
-    <h3>{{ assignment.num_questions }} questions</h3>
+    <h2>{{ assignment.num_questions }} questions</h2>
     {{ assignment.description | safe }}
   </div>
   <div class="row">
-    <a href="{% url 'question' code=assignment.code %}" class="btn btn-success">{% trans "Start quiz" %}</a>
+    <a href="{% url 'question' code=assignment.code question_slug=question_slug %}" class="btn btn-success">
+      {% trans "Start quiz" %}
+    </a>
   </div>
 {% endblock content %}

@@ -9,6 +9,11 @@ from quizard.models.BaseQuestion import BaseQuestion
 
 
 class FreeResponseQuestion(BaseQuestion):
+    answer_template = 'quizard/partials/freeresponsequestion/answer.html'
+
     class Meta:
         verbose_name = _('Free response question')
         verbose_name_plural = _('Free response questions')
+
+    def validate_answer(self, answer):
+        return self.answers.filter(value=answer.strip()).exists()

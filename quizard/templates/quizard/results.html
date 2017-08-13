@@ -1,0 +1,25 @@
+{% extends 'quizard/base.html' %}
+{% load i18n %}
+
+{% block content %}
+  <div class="row">
+    <h1>
+      {% blocktrans with name=assignment.name %}
+        {{ name }}: results
+      {% endblocktrans %}
+    </h1>
+  </div>
+  <div class="row">
+    <div class="list-group">
+      {% for question_dict in questions %}
+        <a href="#" class="list-group-item list-group-item-{% if question_dict.correct %}success{% else %}danger{% endif %}">
+          <h2 class="list-group-item-heading">{{ question_dict.question.title }}</h2>
+          <p class="list-group-item-text">
+            {% trans 'You said' %}:
+          </p>
+          {{ question_dict.answer | safe }}
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock content %}
