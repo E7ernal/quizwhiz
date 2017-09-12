@@ -1,0 +1,17 @@
+---
+
+- hosts: app
+  roles:
+    - role: app
+
+      # The role variables are parameterized instead of being declared in a
+      # vars block so that they can be correctly interpolated in task names.
+      app_name: quizwhiz
+      app_group: "{{ app_name }}"
+      app_django_settings_module: quizwhiz.settings
+      app_root: /home/{{ app_name }}/site
+      virtualenv_name: "{{ app_name }}"
+      virtualenv_path: /home/{{ app_name }}/.virtualenvs/{{ virtualenv_name }}
+      app_repository_url: git@github.com:E7ernal/quizwhiz.git
+
+...

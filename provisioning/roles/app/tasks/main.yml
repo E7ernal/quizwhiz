@@ -1,0 +1,346 @@
+---
+
+- include_vars: vault.yml
+  tags:
+    - deploy
+
+- name: Update apt keys
+  command: apt-key update
+  become: yes
+
+# +---------------------------------------------------------------------------+
+# |                                                                           |
+# |             Install universal bootstrapping dependencies                  |
+# |                                                                           |
+# +---------------------------------------------------------------------------+
+
+- name: Install universal APT requirements
+  apt:
+    name: '{{ item }}'
+    state: present
+    update_cache: yes
+  with_items:
+    - 'libmysqlclient-dev'
+    - 'python-pip'
+    - 'libpython2.7-dev'
+    - 'python2.7'
+    - 'git'
+    - 'mysql-client'
+  become: yes
+
+- name: Install mysqldb module
+  pip: name='MySQL-python' state=present
+  become: yes
+
+- name: Create '{{ app_name }}' user
+  user:
+    name: '{{ app_name }}'
+    groups: www-data
+    state: present
+  become: yes
+
+# +---------------------------------------------------------------------------+
+# |                                                                           |
+# |                 Quality-of-life vim and git configuration                 |
+# |                                                                           |
+# +---------------------------------------------------------------------------+
+
+- name: Stat ~/.vimrc
+  local_action: stat path=~/.vimrc
+  register: vimrc
+
+- name: Copy ~/.vimrc
+  copy:
+    src: ~/.vimrc
+    dest: /home/{{ app_name }}/.vimrc
+  become_user: '{{ app_name }}'
+  become: yes
+  when: >
+    vimrc.stat.exists and
+    vimrc.stat.isreg is defined and
+    vimrc.stat.isreg
+
+- name: Stat ~/.gitconfig
+  local_action: stat path=~/.gitconfig
+  register: gitconfig
+
+- name: Copy ~/.gitconfig
+  copy:
+    src: ~/.gitconfig
+    dest: /home/{{ app_name }}/.gitconfig
+  become_user: '{{ app_name }}'
+  become: yes
+  when: >
+    gitconfig.stat.exists and
+    gitconfig.stat.isreg is defined and
+    gitconfig.stat.isreg
+
+# +---------------------------------------------------------------------------+
+# |                                                                           |
+# |              Configure user account and project structure                 |
+# |                                                                           |
+# +---------------------------------------------------------------------------+
+
+- name: Create directories
+  file:
+    path: /home/{{ app_name }}/{{ item.name }}
+    owner: "{{ app_name }}"
+    group: "{{ app_group }}"
+    mode: '{{ item.mode }}'
+    state: directory
+  with_items:
+    - {name: '.ssh', mode: 'u=rwx,g-rwx,o-rwx'}
+    - {name: 'run', mode: 'u=rwx,g=rx,o=rx'}
+    - {name: 'logs', mode: 'u=rwx,g=rx,o=rx'}
+  become: yes
+
+- name: Set private/public keys for '{{ app_name }}' user
+  copy:
+    content: '{{ item.key }}'
+    dest: '/home/{{ app_name }}/.ssh/{{ item.file }}'
+    mode: 0600
+    owner: '{{ app_name }}'
+    group: '{{ app_group }}'
+  with_items:
+    - {key: '{{ id_rsa }}', file: 'id_rsa'}
+    - {key: '{{ id_rsa_pub }}', file: 'id_rsa.pub'}
+  become: yes
+  no_log: yes
+
+- name: Install the '{{ app_name }}' repository
+  git:
+    dest: "{{ app_root }}"
+    repo: "{{ app_repository_url }}"
+    version: "{{ app_repository_version }}"
+    accept_hostkey: yes
+  become: yes
+  become_user: "{{ app_name }}"
+  notify:
+    - reload supervisor
+    - restart nginx
+  tags:
+    - deploy
+
+- name: Create /home/{{ app_name }}/site/static directory
+  file:
+    path: /home/{{ app_name }}/site/static
+    owner: "{{ app_name }}"
+    group: "{{ app_group }}"
+    mode: 0755
+    state: directory
+  become: yes
+
+# +---------------------------------------------------------------------------+
+# |                                                                           |
+# |                      Install and configure virtualenv                     |
+# |                                                                           |
+# +---------------------------------------------------------------------------+
+
+- name: Install virtualenv and virtualenvwrapper
+  pip:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - virtualenv
+    - virtualenvwrapper
+  become: yes
+
+- name: Modify ~{{ app_name }}/.bashrc
+  lineinfile:
+    dest: /home/{{ app_name }}/.bashrc
+    line: "{{ item }}"
+    insertafter: EOF
+    state: present
+  with_items:
+    - source `which virtualenvwrapper.sh`
+    - workon {{ virtualenv_name }}
+  become: yes
+
+- name: Create the virtual environment
+  shell: ". `which virtualenvwrapper.sh` && mkvirtualenv -p /usr/bin/python2.7 {{ virtualenv_name }}"
+  args:
+    executable: /bin/bash
+    creates: '{{ virtualenv_path }}'
+  become_user: '{{ app_name }}'
+  become: yes
+
+- name: Modify ~{{ app_name }}/.virtualenvs/{{ virtualenv_name }}/bin/postactivate
+  lineinfile:
+    dest: '{{ virtualenv_path }}/bin/postactivate'
+    line: '{{ item }}'
+    insertafter: EOF
+    mode: 0755
+    state: present
+  with_items:
+    - "PROJECT_ROOT={{ app_root }}"
+    - 'export PYTHONPATH="${VIRTUAL_ENV}/lib/python2.7/site-packages:${PYTHONPATH}"'
+    - 'export PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH}"'
+    - 'export DJANGO_SETTINGS_MODULE="{{ app_django_settings_module }}"'
+    - "cd $PROJECT_ROOT"
+  become: yes
+
+# +---------------------------------------------------------------------------+
+# |                                                                           |
+# |                Install dependencies using apt-get and pip                 |
+# |                                                                           |
+# +---------------------------------------------------------------------------+
+
+- name: Install APT packages
+  apt: name='{{ item }}' state=present update_cache=yes
+  become: yes
+  with_flattened:
+    - '{{ app_apt_dependencies }}'
+    - '{{ group_apt_dependencies }}'
+  tags:
+    - deploy
+
+- name: Install dependencies from ~{{ app_name }}/site/requirements.txt
+  pip: requirements="{{ app_root }}/requirements.txt" virtualenv="{{ virtualenv_path }}" state=present
+  become_user: "{{ app_name }}"
+  become: yes
+  notify:
+    - reload supervisor
+    - restart nginx
+  tags:
+    - deploy
+
+# +---------------------------------------------------------------------------+
+# |                                                                           |
+# |                            Initialize Django                              |
+# |                                                                           |
+# +---------------------------------------------------------------------------+
+
+- name: Create {{ app_root }}/{{ app_name }}/local_settings.py
+  template:
+    src: local_settings.py.j2
+    dest: '{{ app_root }}/{{ app_name }}/local_settings.py'
+    owner: '{{ app_name }}'
+    group: '{{ app_group }}'
+    mode: 0644
+    backup: yes
+  become: yes
+  notify:
+    - reload supervisor
+    - restart nginx
+  tags:
+    - deploy
+
+- name: Migrate the database
+  django_manage:
+    app_path: '{{ app_root }}'
+    command: migrate
+    settings: '{{ app_django_settings_module }}'
+    virtualenv: '{{ virtualenv_path }}'
+  become_user: '{{ app_name }}'
+  become: yes
+  notify:
+    - reload supervisor
+    - restart nginx
+  tags:
+    - deploy
+
+- name: Collect static files
+  django_manage:
+    app_path: '{{ app_root }}'
+    command: collectstatic --noinput
+    settings: '{{ app_django_settings_module }}'
+    virtualenv: '{{ virtualenv_path }}'
+  become_user: '{{ app_name }}'
+  become: yes
+  tags:
+    - deploy
+
+# +---------------------------------------------------------------------------+
+# |                                                                           |
+# |                            Configure gunicorn                             |
+# |                                                                           |
+# +---------------------------------------------------------------------------+
+
+- name: Install gunicorn_start.sh
+  template:
+    src: gunicorn_start.sh.j2
+    dest: /home/{{ app_name }}/gunicorn_start.sh
+    owner: '{{ app_name }}'
+    group: www-data
+    mode: 0754
+    backup: yes
+  become: yes
+  tags:
+    - deploy
+
+# +---------------------------------------------------------------------------+
+# |                                                                           |
+# |                            Configure supervisor                           |
+# |                                                                           |
+# +---------------------------------------------------------------------------+
+
+- name: Install supervisor
+  apt:
+    name: supervisor
+    state: present
+    update_cache: yes
+  become: yes
+  notify:
+    - start supervisor
+
+- name: Install supervisor tasks
+  template:
+    src: '{{ item.src }}'
+    dest: /etc/supervisor/conf.d/{{ item.dest }}.conf
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  with_flattened:
+    - '{{ app_supervisor_tasks }}'
+    - '{{ group_supervisor_tasks }}'
+  become: yes
+  notify:
+    - reload supervisor
+
+# +---------------------------------------------------------------------------+
+# |                                                                           |
+# |                             Configure nginx                               |
+# |                                                                           |
+# +---------------------------------------------------------------------------+
+
+- name: Install nginx
+  apt:
+    name: nginx
+    state: present
+  become: yes
+  notify:
+    - start nginx
+
+- name: Install /etc/nginx/sites-available/{{ app_name }}.conf
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/sites-available/{{ app_name }}.conf
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  become: yes
+  tags:
+    - deploy
+
+- name: Disable 'default' nginx configuration
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  become: yes
+
+- name: Enable '{{ app_name }}.conf' nginx configuration
+  file:
+    src: /etc/nginx/sites-available/{{ app_name }}.conf
+    dest: /etc/nginx/sites-enabled/{{ app_name }}.conf
+    owner: root
+    group: root
+    state: link
+  become: yes
+  notify:
+    - restart nginx
+  tags:
+    - deploy
+
+...

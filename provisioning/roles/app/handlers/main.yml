@@ -1,0 +1,37 @@
+---
+
+- name: restart mysql
+  service:
+    name: mysql
+    state: restarted
+  become: yes
+
+- name: start supervisor
+  service:
+    name: supervisor
+    state: started
+  become: yes
+
+- name: reload supervisor
+  command: supervisorctl reload
+  become: yes
+
+- name: restart supervisor
+  supervisorctl:
+    name: all
+    state: restarted
+  become: yes
+
+- name: start nginx
+  service:
+    name: nginx
+    state: started
+  become: yes
+
+- name: restart nginx
+  service:
+    name: nginx
+    state: restarted
+  become: yes
+
+...

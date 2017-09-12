@@ -64,6 +64,9 @@ instance/
 # Sphinx documentation
 docs/_build/
 
+# Sensitive provisioning  stuff:
+*.pem
+
 # PyBuilder
 target/
 

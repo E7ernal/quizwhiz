@@ -1,0 +1,41 @@
+# vim: ts=4:sw=4:expandtabs
+
+import os
+
+__author__ = '{{ lookup('env', 'SETTINGS_AUTHOR') | default('zach.mott@gmail.com') }}'
+
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+
+MANAGERS = ADMINS = [
+{% for name, email in app_admins %}
+    ({{ name }}, {{ email }}),
+{% endfor %}
+]
+
+{% if app_nginx_server_names is defined %}
+ALLOWED_HOSTS = [
+{% for name in app_nginx_server_names %}
+    '{{ name }}',
+{% endfor %}
+]
+{% endif %}
+
+SECRET_KEY = {{ django_secret_key }}
+
+DEBUG = {{ app_debug }}
+TEMPLATE_DEBUG = {{ app_template_debug }}
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': '{{ app_db_name }}',
+        'HOST': '{{ app_db_host }}',
+        'USER': '{{ app_name }}',
+        'PASSWORD': '{{ app_db_password }}',
+        'PORT': 3306,
+    },
+}
+
+{% for item in group_extra_settings %}
+{{ item.key }} = {{ item.value }}
+{% endfor %}

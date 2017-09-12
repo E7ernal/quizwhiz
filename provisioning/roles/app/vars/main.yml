@@ -1,0 +1,21 @@
+---
+
+app_apt_dependencies:
+  - ntp
+  - sl
+  - libmysqlclient-dev
+  - libmemcached-dev
+  - build-essential
+  - libssl-dev
+  - libffi-dev
+  - python-dev
+  - python-pip
+  - libncurses5-dev
+
+app_supervisor_tasks:
+  - {src: supervisor.conf.j2, dest: '{{ app_name }}'}
+
+id_rsa: "{{ vault_id_rsa }}"
+id_rsa_pub: "{{ vault_id_rsa_pub }}"
+
+...

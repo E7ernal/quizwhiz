@@ -1,0 +1,37 @@
+upstream {{ app_name }}_server {
+  server unix:/home/{{ app_name }}/run/gunicorn.sock fail_timeout=0;
+}
+
+server {
+  listen 80;
+  client_max_body_size 256M;
+  server_name
+{% for name in app_nginx_server_names %}
+               {{ name }}{% if loop.last %};{% endif %}
+
+{% endfor %}
+
+  access_log /home/{{ app_name }}/logs/nginx.access.log;
+  error_log /home/{{ app_name }}/logs/nginx.error.log info;
+
+  location /static {
+    alias {{ app_root }}/static/;
+  }
+
+  location / {
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+    proxy_redirect off;
+
+    if (!-f $request_filename) {
+      proxy_pass http://{{ app_name }}_server;
+      break;
+    }
+  }
+
+  # Error pages
+  error_page 500 502 503 504 /500.html;
+  location = /500.html {
+    root {{ app_root }}/static/;
+  }
+}
