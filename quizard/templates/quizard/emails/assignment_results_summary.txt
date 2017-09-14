@@ -1,0 +1,8 @@
+Hello,
+
+{{ assignee_name }} earned {{ points_earned }} / {{ assignment.total_points }} points for assignment {{ assignment.code }} on {{ BRAND_NAME }}.
+
+
+Thanks for using {{ BRAND_NAME }},
+The {{ BRAND_NAME }} team
+{{ DEFAULT_FROM_EMAIL }}

@@ -72,6 +72,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'quizard.context_processors.quizard_settings',
             ],
         },
     },
@@ -118,6 +119,14 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR + '/static'
 
+# Email configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'email-smtp.us-west-2.amazonaws.com'
+# EMAIL_HOST_USER = 'Define me in local_settings.py.'
+# EMAIL_HOST_PASSWORD = 'Define me in local_settings.py.'
+EMAIL_PORT = 25
+
 # +------------------------------------------------------------------------------------------------+
 # |                                                                                                |
 # |                                    ckeditor configuration                                      |
@@ -139,6 +148,19 @@ CKEDITOR_CONFIGS = {
         'extraPlugins': 'filerimage',
     }
 }
+
+# +------------------------------------------------------------------------------------------------+
+# |                                                                                                |
+# |                                          quizard                                               |
+# |                                                                                                |
+# +------------------------------------------------------------------------------------------------+
+
+BRAND_NAME = 'QuizWhiz'  # The brand this instance of quizard should present itself as.
+DOMAIN_NAME = 'quizard.org'  # The canonical domain name on which this quizard instance is deployed.
+
+# This is actually a Django setting, but we're making it depend on the
+# quizard-specific DOMAIN_NAME setting above.
+DEFAULT_FROM_EMAIL = "webmaster@{domain}".format(domain=DOMAIN_NAME)
 
 # +------------------------------------------------------------------------------------------------+
 # |                                                                                                |

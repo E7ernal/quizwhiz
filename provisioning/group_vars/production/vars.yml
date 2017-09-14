@@ -27,7 +27,9 @@ app_db_name: "quizwhiz_django"
 app_db_host: "localhost"
 app_db_password: "{{ vault_app_db_password }}"
 
-group_extra_settings: []
+group_extra_settings:
+  - {EMAIL_HOST_USER: "{{ vault_email_host_user }}"}
+  - {EMAIL_HOST_PASSWORD: "{{ vault_email_host_password }}'"}
 
 group_apt_dependencies: []
 group_supervisor_tasks: []

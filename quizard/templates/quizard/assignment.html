@@ -7,9 +7,24 @@
     <h2>{{ assignment.num_questions }} questions</h2>
     {{ assignment.description | safe }}
   </div>
-  <div class="row">
-    <a href="{% url 'question' code=assignment.code question_slug=question_slug %}" class="btn btn-success">
-      {% trans "Start quiz" %}
-    </a>
+  <div class="row col-md-5">
+    <form action="." method="post">
+
+      {% for error in form.non_field_errors %}
+        <div class="alert alert-danger">
+          <i class="glyphicon glyphicon-exclamation-sign"></i> {{ error }}
+        </div>
+      {% endfor %}
+
+      {% csrf_token %}
+      {% for field in form %}
+        {% include 'quizard/partials/form_field.html' with field=field %}
+      {% endfor %}
+
+      <div class="form-group">
+        <button class="btn btn-success">{% trans "Start assignment" %}</button>
+      </div>
+
+    </form>
   </div>
 {% endblock content %}

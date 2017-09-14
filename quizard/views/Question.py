@@ -9,7 +9,6 @@ from django.db.models import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.template.response import TemplateResponse
 
-
 from quizard.models import Assignment
 
 
@@ -55,6 +54,7 @@ class Question(generic.View):
         The next question is randomly determined.
         """
         request.session.modified = True
+
         request.session['answers'][question.pk] = request.POST['answer']
 
         try:

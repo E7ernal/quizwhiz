@@ -46,6 +46,13 @@ class Assignment(AbstractBase):
         return self.questions.count()
     num_questions.short_description = _('Number of questions')
 
+    @cached_property
+    def total_points(self):
+        # It would be nice to do this in the database, but the generic
+        # relation between AssignmentQuestion and BaseQuestion makes that
+        # very difficult to do.
+        return reduce(lambda x, y: x + y, [q.point_value for q in self.questions.all()])
+
     def get_question_by_slug(self, question_slug):
         """
         Get a particular question, as identified by the question_slug.

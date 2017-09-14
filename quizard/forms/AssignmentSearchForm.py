@@ -12,7 +12,11 @@ class AssignmentSearchForm(forms.Form):
                                 'a teacher and a school, but not both.')
 
     school = forms.CharField(max_length=64, required=False)
-    teacher = forms.CharField(max_length=64, required=False)
+    teacher = forms.CharField(
+        max_length=64,
+        required=False,
+        help_text=_("Your teacher's last name.")
+    )
     code = forms.CharField(max_length=16, required=False)
 
     def clean(self):
