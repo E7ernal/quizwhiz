@@ -1,8 +1,8 @@
   <div class="row">
     <div class="progress">
-      <div class="progress-bar" role="progressbar" style="width: {{ percent_done }}%;"
+      <div class="progress-bar progress-bar-striped active {{ progress_bar_class }}" role="progressbar" style="width: {{ percent_done }}%;"
            aria-valuenow="{{ completed_questions }}" aria-valuemin="0" aria-valuemax="{{ total_questions }}">
-        {{ percent_done }}%
+        {% if percent_done %}{{ percent_done }}%{% endif %}
       </div>
     </div>
   </div>

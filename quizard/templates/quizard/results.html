@@ -5,14 +5,21 @@
   <div class="row">
     <h1>
       {% blocktrans with name=assignment.name %}
-        {{ name }}: results
+        Results for {{ name }}
       {% endblocktrans %}
     </h1>
+    <h3>
+      {% blocktrans with points_earned=points_earned total_points=assignment.total_points %}
+        Your score: {{ points_earned }} / {{ total_points }}
+      {% endblocktrans %}
+    </h3>
   </div>
   <div class="row">
+    <h3>{% trans 'Question breakdown' %}</h3>
     <div class="list-group">
       {% for question_dict in questions %}
-        <a href="#" class="list-group-item list-group-item-{% if question_dict.correct %}success{% else %}danger{% endif %}">
+        <a href="#" data-toggle="modal" data-target="#explanation-{{ question_dict.question.pk }}"
+           class="list-group-item list-group-item-{% if question_dict.correct %}success{% else %}danger{% endif %}">
           <h2 class="list-group-item-heading">{{ question_dict.question.title }}</h2>
           <p class="list-group-item-text">
             {% trans 'You said' %}:
@@ -21,5 +28,29 @@
         </a>
       {% endfor %}
     </div>
+
+    <a href="{% url 'index' %}" class="btn btn-info">{% blocktrans with brand=BRAND_NAME %}Back to {{ brand }}{% endblocktrans %}</a>
   </div>
+
+  {% for question_dict in questions %}
+    <div id="explanation-{{ question_dict.question.pk }}" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>{{ question_dict.question.title }}</h3>
+          </div>
+          <div class="modal-body">
+            <h4>{% trans "Explanation" %}</h4>
+            {{ question_dict.question.explanation | safe }}
+          </div>
+          <div class="modal-footer">
+            <button data-toggle="modal" class="btn btn-danger"
+                    data-target="#explanation-{{ question_dict.question.pk }}">
+              <span>{% trans "Close" %}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
 {% endblock content %}

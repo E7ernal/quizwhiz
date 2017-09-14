@@ -4,6 +4,7 @@ __author__ = 'zach.mott@gmail.com'
 
 from django.conf import settings
 from django.views import generic
+from django.contrib import messages
 from django.shortcuts import redirect
 from django.template.loader import get_template
 from django.utils.translation import ugettext_lazy as _
@@ -23,12 +24,14 @@ class Results(generic.DetailView):
         # If the user isn't currently working on an assignment,
         # they shouldn't be allowed to access the results page.
         if 'assignment_code' not in self.request.session:
+            messages.info(request, _('You must complete an assignment before visiting the results page.'))
             return redirect('index')
 
         # If the assignment is still in progress (i.e., we have a current position),
         # send the user back to that position rather than allowing them to view their
         # (incomplete) results.
         if isinstance(request.session.get('assignment_in_progress', None), basestring):
+            messages.info(request, _('You must complete this assignment before viewing your results.'))
             return redirect(request.session['assignment_in_progress'])
 
         return super(Results, self).get(request, *pos, **kw)

@@ -1,4 +1,4 @@
-<a href="#" class="answer list-group-item" >
+<a href="#" class="answer list-group-item {% if submitted_answer %}disabled{% endif %} {% if submitted_answer == answer.value %}active{% endif %}">
   {{ answer.value | safe }}
   <input type="hidden" value="{{ answer.value }}" />
 </a>

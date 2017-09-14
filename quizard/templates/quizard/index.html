@@ -5,15 +5,13 @@
 {% block content %}
   <div class="jumbotron">
     <div class="container text-center">
-      <h1>Welcome to QuizWhiz</h1>
+      <h2>Welcome to QuizWhiz</h2>
       <p>
         Enter your assignment code or school and teacher name combination to get started.
       </p>
     </div>
   </div>
-  <div class="container">
-    <div class="row col-md-6 col-md-offset-3">
-      {% include 'quizard/partials/form.html' with form=form method="post" action="." %}
-    </div>
+  <div class="row">
+    {% include 'quizard/partials/form.html' with form=form method="post" action="." %}
   </div>
 {% endblock content %}

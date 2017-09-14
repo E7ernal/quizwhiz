@@ -16,11 +16,19 @@
     {% render_answers question %}
   </div>
   <div class="row">
-    <button class="submit-answer btn btn-success" style="display: none;"
-            data-toggle="modal" data-target="#answer-modal" data-backdrop="static" data-keyboard="false">
-      <span>{% trans 'Submit answer' %}</span>
-      <i class="glyphicon glyphicon-refresh glyphicon-spin" style="display: none;"></i>
-    </button>
+    {% if submitted_answer %}
+      <button class="submit-answer btn btn-success"
+              data-toggle="modal" data-target="#answer-modal" data-backdrop="static" data-keyboard="false">
+        <span>{% trans 'View explanation' %}</span>
+        <i class="glyphicon glyphicon-refresh glyphicon-spin" style="display: none;"></i>
+      </button>
+    {% else %}
+      <button class="submit-answer btn btn-success" style="display: none;"
+              data-toggle="modal" data-target="#answer-modal" data-backdrop="static" data-keyboard="false">
+        <span>{% trans 'Submit answer' %}</span>
+        <i class="glyphicon glyphicon-refresh glyphicon-spin" style="display: none;"></i>
+      </button>
+    {% endif %}
   </div>
 
   {% include 'quizard/partials/progress_bar.html' %}

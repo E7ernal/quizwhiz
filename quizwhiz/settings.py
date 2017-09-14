@@ -129,6 +129,23 @@ EMAIL_PORT = 25
 
 # +------------------------------------------------------------------------------------------------+
 # |                                                                                                |
+# |                                    django.contrib.messages                                     |
+# |                                                                                                |
+# +------------------------------------------------------------------------------------------------+
+# Change default message tags to things that bootstrap recognizes.
+# https://docs.djangoproject.com/en/1.11/ref/contrib/messages/#message-tags
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert-info',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+}
+
+
+# +------------------------------------------------------------------------------------------------+
+# |                                                                                                |
 # |                                     logging configuration                                      |
 # |                                                                                                |
 # +------------------------------------------------------------------------------------------------+

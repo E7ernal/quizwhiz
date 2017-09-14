@@ -11,8 +11,8 @@ from django.core.exceptions import ImproperlyConfigured
 register = Library()
 
 
-@register.simple_tag
-def render_answers(question):
+@register.simple_tag(takes_context=True)
+def render_answers(context, question):
     try:
         template = get_template(question.answer_template)
     except TemplateDoesNotExist:
@@ -23,9 +23,8 @@ def render_answers(question):
     answers = list(question.answers.all())
     random.shuffle(answers)
 
-    context = {
+    return template.render({
         'question': question,
         'answers': answers,
-    }
-
-    return template.render(context)
+        'submitted_answer': context['submitted_answer']
+    }, context.request)

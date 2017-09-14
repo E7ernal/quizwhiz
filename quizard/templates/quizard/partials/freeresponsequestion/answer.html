@@ -1,5 +1,6 @@
 {% load i18n %}
 
 <a class="answer list-group-item active">
-  <input class="freeresponse-answer" type="text" value="" placeholder="{% trans 'Enter your answer here' %}" />
+  <input class="freeresponse-answer" type="text" value="{{ submitted_answer }}"
+  placeholder="{% trans 'Enter your answer here' %}" {% if submitted_answer %}disabled{% endif %}/>
 </a>
