@@ -53,6 +53,35 @@ class Assignment(AbstractBase):
         # very difficult to do.
         return reduce(lambda x, y: x + y, [q.point_value for q in self.questions.all()])
 
+    def calculate_score(self, answers):
+        """
+        Calculate the total number of points earned by a particular set
+        of answers. 'answers' is a dict that maps {question.pk: answer_text}.
+        """
+        score = 0
+
+        for question_pk, answer in answers.iteritems():
+            try:
+                question = self.get_question_by_pk(question_pk)
+                if question.validate_answer(answer):
+                    score += question.point_value
+            except models.ObjectDoesNotExist:
+                print "Couldn't find question", question_pk
+
+        return score
+
+    def get_question_by_pk(self, question_pk):
+        """
+        Get the question provided by the given question_pk. Raises
+        ObjectDoesNotExist if no such question is attached to this
+        Assignment.
+        """
+        for question in self.questions.all():
+            if int(question.pk) == int(question_pk):
+                return question
+
+        raise models.ObjectDoesNotExist()
+
     def get_question_by_slug(self, question_slug):
         """
         Get a particular question, as identified by the question_slug.

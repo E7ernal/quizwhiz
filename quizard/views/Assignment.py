@@ -17,20 +17,6 @@ class Assignment(generic.edit.FormMixin, generic.DetailView):
     template_name = 'quizard/assignment.html'
     form_class = AssignmentStartForm
 
-    def get_context_data(self, **kw):
-        context = super(Assignment, self).get_context_data(**kw)
-
-        context['form'] = self.get_form()
-        self.initialize_session(context['assignment'])
-
-        context['question_slug'] = context['assignment'].get_random_question().slug
-        return context
-
-    def initialize_session(self, assignment):
-        self.request.session['assignment_code'] = assignment.code
-        self.request.session['visited_questions'] = []
-        self.request.session['answers'] = {}
-
     def post(self, request, *pos, **kw):
         self.object = self.get_object()
 
@@ -39,6 +25,32 @@ class Assignment(generic.edit.FormMixin, generic.DetailView):
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
+
+    def get_context_data(self, **kw):
+        context = super(Assignment, self).get_context_data(**kw)
+
+        context['form'] = self.get_form()
+
+        # Get the user's score for this assignment, if it exists.
+        completed_assignments = self.request.session.get('completed_assignments', {})
+        context['score'] = completed_assignments.get(self.object.code, None)
+
+        self.initialize_session(context['assignment'])
+
+        return context
+
+    def initialize_session(self, assignment):
+        """
+        Initialize the user's assignment-taking session. We record
+        - The current assignment's code.
+        - The user's position within the assignment (in the form of a URL).
+        - A list of questions the user has visited.
+        - A dict of question-answer pairs the users has submitted.
+        """
+        self.request.session['assignment_code'] = assignment.code
+        self.request.session['assignment_in_progress'] = self.request.get_full_path()
+        self.request.session['visited_questions'] = []
+        self.request.session['answers'] = {}
 
     def form_valid(self, form):
         self.request.session['assignee_name'] = form.cleaned_data['name']

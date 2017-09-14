@@ -24,23 +24,34 @@ class Results(generic.DetailView):
         # they shouldn't be allowed to access the results page.
         if 'assignment_code' not in self.request.session:
             return redirect('index')
+
+        # If the assignment is still in progress (i.e., we have a current position),
+        # send the user back to that position rather than allowing them to view their
+        # (incomplete) results.
+        if isinstance(request.session.get('assignment_in_progress', None), basestring):
+            return redirect(request.session['assignment_in_progress'])
+
         return super(Results, self).get(request, *pos, **kw)
 
     def get_context_data(self, **kw):
         context = super(Results, self).get_context_data(**kw)
 
-        context['questions'] = self.build_question_dicts(
-            context['assignment'],
-            self.request.session['answers']
-        )
-        context['points_earned'] = self.calculate_points_earned(context['questions'])
+        context.update({
+            'points_earned': self.object.calculate_score(self.request.session['answers']),
+            'questions': self.build_question_dicts(
+                context['assignment'],
+                self.request.session['answers']
+            )
+        })
 
-        try:
-            self.request.session['completed_assignments'].append(self.object.code)
-        except KeyError:
-            self.request.session['completed_assignments'] = [self.object.code]
+        # Record the user's score on this assignment.
+        completed_assignments = self.request.session.get('completed_assignments', {})
+        completed_assignments[self.object.code] = context['points_earned']
+        self.request.session['completed_assignments'] = completed_assignments
+
+        # Clear the user's current assignment.
 #        del self.request.session['assignment_code']
-#        self.request.session.modified = True
+        self.request.session.modified = True
 
         self.send_emails()
 
@@ -57,9 +68,6 @@ class Results(generic.DetailView):
             })
 
         return question_list
-
-    def calculate_points_earned(self, question_dict):
-        return reduce(lambda x, y: x + y, [q['question'].point_value for q in question_dict if q['correct']])
 
     def send_emails(self):
         self.send_teacher_email(self.object)
@@ -91,6 +99,7 @@ class Results(generic.DetailView):
         template_instance = get_template(email_template)
         context = {
             'assignment': assignment,
+            'points_earned': assignment.calculate_score(self.request.session['answers']),
             'questions': self.build_question_dicts(
                 assignment,
                 self.request.session['answers'],
@@ -99,8 +108,6 @@ class Results(generic.DetailView):
             'DEFAULT_FROM_EMAIL': settings.DEFAULT_FROM_EMAIL,
             'BRAND_NAME': settings.BRAND_NAME
         }
-
-        context['points_earned'] = self.calculate_points_earned(context['questions'])
 
         subject = _("{assignment.code} results -- {assignee_name}").format(**context)
 

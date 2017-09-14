@@ -4,27 +4,40 @@
 {% block content %}
   <div class="row">
     <h1>{{ assignment.code }} - {{ assignment.name }}</h1>
-    <h2>{{ assignment.num_questions }} questions</h2>
+    <h2>{{ assignment.num_questions }} questions ({{ assignment.total_points }} points)</h2>
     {{ assignment.description | safe }}
   </div>
-  <div class="row col-md-5">
-    <form action="." method="post">
+  {% if score %}
+    <div class="row">
+      <p>
+        {% blocktrans with score=score total_points=assignment.total_points %}
+          You have already completed this assignment. You scored {{ score }} out of {{ total_points }} points.
+        {% endblocktrans %}
+      <p>
+    </div>
+    <div class="row">
+      <button class="btn btn-success" onclick="history.back(); return false;">{% trans "Back" %}</button>
+    </div>
+  {% else %}
+    <div class="row col-md-5">
+      <form action="." method="post">
 
-      {% for error in form.non_field_errors %}
-        <div class="alert alert-danger">
-          <i class="glyphicon glyphicon-exclamation-sign"></i> {{ error }}
+        {% for error in form.non_field_errors %}
+          <div class="alert alert-danger">
+            <i class="glyphicon glyphicon-exclamation-sign"></i> {{ error }}
+          </div>
+        {% endfor %}
+
+        {% csrf_token %}
+        {% for field in form %}
+          {% include 'quizard/partials/form_field.html' with field=field %}
+        {% endfor %}
+
+        <div class="form-group">
+          <button class="btn btn-success">{% trans "Start assignment" %}</button>
         </div>
-      {% endfor %}
 
-      {% csrf_token %}
-      {% for field in form %}
-        {% include 'quizard/partials/form_field.html' with field=field %}
-      {% endfor %}
-
-      <div class="form-group">
-        <button class="btn btn-success">{% trans "Start assignment" %}</button>
-      </div>
-
-    </form>
-  </div>
+      </form>
+    </div>
+  {% endif %}
 {% endblock content %}

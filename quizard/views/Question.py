@@ -28,6 +28,9 @@ class Question(generic.View):
         )
 
     def get(self, request, assignment, question):
+        # Update the user's position within this assignment.
+        request.session['assignment_in_progress'] = request.get_full_path()
+
         if question.pk not in request.session['visited_questions']:
             # Sessions are only saved when the session object is modified.
             # Appending something to a value in the session dict modifies
@@ -61,6 +64,11 @@ class Question(generic.View):
             next_question = assignment.get_random_question(request.session['visited_questions'])
         except Assignment.OutOfQuestions:
             next_url = reverse('results', kwargs={'code': assignment.code})
+
+            # If this was the last question, the assignment has been
+            # completed, so we can stop tracking their position.
+            del request.session['assignment_in_progress']
+            request.session.modified = True
         else:
             next_url = reverse('question', kwargs={
                 'code': assignment.code,
