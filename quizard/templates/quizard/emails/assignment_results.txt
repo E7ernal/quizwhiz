@@ -2,7 +2,7 @@
 
 {{ assignee_name }} recently completed {{ assignment.code }}. Here are the results:
 {% for question_dict in questions %}
-  - {{ forloop.count }}. {{ question_dict.question.title }} ({{ question_dict.question.point_value }} point(s))
+  {{ forloop.counter }}. {{ question_dict.question.title }} ({{ question_dict.question.point_value }} point(s))
       {{ assignee_name }}'s answer: {{ question_dict.answer | striptags }}
       {% if question_dict.correct %}Correct -- {{ question_dict.question.point_value }} point(s) earned.{% else %}Incorrect -- 0 points earned.{% endif %}
 {% endfor %}
