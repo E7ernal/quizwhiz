@@ -19,9 +19,7 @@ app_admins:
 # Used to configure both 'server_name' nginx directive and
 # local_settings.ALLOWED_HOSTS Django configuration parameter.
 app_nginx_server_names:
-  - "52.40.40.165"
   - "quizwhiz.io"
-  - "www.quizwhiz.io"
 
 app_db_name: "quizwhiz_django"
 app_db_host: "localhost"
