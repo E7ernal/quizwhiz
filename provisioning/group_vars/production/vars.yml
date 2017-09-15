@@ -8,8 +8,6 @@ is_production: true
 
 app_repository_version: "master"
 
-django_secret_key: "{{ vault_django_secret_key }}"
-
 app_debug: "False"
 app_template_debug: "False"
 
@@ -26,8 +24,11 @@ app_db_host: "localhost"
 app_db_password: "{{ vault_app_db_password }}"
 
 group_extra_settings:
-  - {key: 'EMAIL_HOST_USER', value: "{{ vault_email_host_user }}"}
-  - {key: 'EMAIL_HOST_PASSWORD', value: "{{ vault_email_host_password }}"}
+  - {key: 'SECRET_KEY', value: "{{ vault_django_secret_key }}"}
+  - {key: 'EMAIL_HOST_USER', value: "{{ vault_aws_access_key_id }}"}
+  - {key: 'EMAIL_HOST_PASSWORD', value: "{{ vault_aws_secret_access_key }}"}
+  - {key: 'AWS_ACCESS_KEY_ID', value: "{{ vault_aws_access_key_id }}"}
+  - {key: 'AWS_SECRET_ACCESS_KEY', value: "{{ vault_aws_secret_access_key }}"}
 
 group_apt_dependencies: []
 group_supervisor_tasks: []

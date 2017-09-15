@@ -20,8 +20,6 @@ ALLOWED_HOSTS = [
 ]
 {% endif %}
 
-SECRET_KEY = {{ django_secret_key }}
-
 DEBUG = {{ app_debug }}
 TEMPLATE_DEBUG = {{ app_template_debug }}
 
@@ -34,6 +32,29 @@ DATABASES = {
         'PASSWORD': '{{ app_db_password }}',
         'PORT': 3306,
     },
+}
+
+FILER_STORAGES = {
+    'public': {
+        'main': {
+            'ENGINE': 'django_s3_storage.storage.S3Storage',
+            'UPLOAD_TO': 'filer.utils.generate_filename.randomized',
+            'UPLOAD_TO_PREFIX': 'filer_public',
+        },
+        'thumbnails': {
+          'ENGINE': 'django_s3_storage.storage.S3Storage',
+        }
+    },
+    'private': {
+        'main': {
+            'ENGINE': 'django_s3_storage.storage.S3Storage',
+            'UPLOAD_TO': 'filer.utils.generate_filename.randomized',
+            'UPLOAD_TO_PREFIX': 'filer_private',
+        },
+        'thumbnails': {
+          'ENGINE': 'django_s3_storage.storage.S3Storage',
+        }
+    }
 }
 
 {% for item in group_extra_settings %}

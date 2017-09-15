@@ -20,16 +20,15 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'u$goz(sk0ba1#wn3n7qjid_j^bw@*t9j#ej^#*x@h^hpr&lra@'
+SECRET_KEY = 'asupersecretquizwhizsecretwith&%!characters'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
+TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -45,6 +44,7 @@ INSTALLED_APPS = [
     'ckeditor_filebrowser_filer',
     'gfklookupwidget',
     'widget_tweaks',
+    'django_s3_storage',
 
     'quizard',
 ]
@@ -82,7 +82,6 @@ WSGI_APPLICATION = 'quizwhiz.wsgi.application'
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -101,21 +100,14 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'America/New_York'
-
+TIME_ZONE = 'America/Chicago'
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
-
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR + '/static'
 
@@ -126,6 +118,9 @@ EMAIL_HOST = 'email-smtp.us-west-2.amazonaws.com'
 # EMAIL_HOST_USER = 'Define me in local_settings.py.'
 # EMAIL_HOST_PASSWORD = 'Define me in local_settings.py.'
 EMAIL_PORT = 25
+
+# Media file storage
+DEFAULT_FILE_STORAGE = 'django_s3_storage.storage.S3Storage'
 
 # +------------------------------------------------------------------------------------------------+
 # |                                                                                                |
@@ -191,6 +186,28 @@ CKEDITOR_CONFIGS = {
     }
 }
 
+# +------------------------------------------------------------------------------------------------+
+# |                                                                                                |
+# |                                        django-filer                                            |
+# |                                                                                                |
+# +------------------------------------------------------------------------------------------------+
+
+FILER_ENABLE_PERMISSIONS = True
+FILER_PAGINATE_BY = 50
+
+# +------------------------------------------------------------------------------------------------+
+# |                                                                                                |
+# |                                           boto                                                 |
+# |                                                                                                |
+# +------------------------------------------------------------------------------------------------+
+
+AWS_REGION = 'us-west-2'
+# AWS_ACCESS_KEY_ID = 'Define me in local_settings.py.'
+# AWS_SECRET_ACCESS_KEY = 'Define me in local_settings.py.'
+AWS_S3_ADDRESSING_STYLE = 'auto'
+AWS_S3_BUCKET_AUTH = False
+AWS_S3_BUCKET_NAME = 'quizwhiz.io'
+AWS_S3_GZIP = True
 # +------------------------------------------------------------------------------------------------+
 # |                                                                                                |
 # |                                          quizard                                               |
