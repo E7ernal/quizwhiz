@@ -198,7 +198,7 @@ CKEDITOR_CONFIGS = {
 # +------------------------------------------------------------------------------------------------+
 
 BRAND_NAME = 'QuizWhiz'  # The brand this instance of quizard should present itself as.
-DOMAIN_NAME = 'quizard.org'  # The canonical domain name on which this quizard instance is deployed.
+DOMAIN_NAME = 'quizwhiz.io'  # The canonical domain name on which this quizard instance is deployed.
 
 # This is actually a Django setting, but we're making it depend on the
 # quizard-specific DOMAIN_NAME setting above.
