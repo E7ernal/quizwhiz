@@ -119,9 +119,6 @@ EMAIL_HOST = 'email-smtp.us-west-2.amazonaws.com'
 # EMAIL_HOST_PASSWORD = 'Define me in local_settings.py.'
 EMAIL_PORT = 25
 
-# Media file storage
-DEFAULT_FILE_STORAGE = 'django_s3_storage.storage.S3Storage'
-
 # +------------------------------------------------------------------------------------------------+
 # |                                                                                                |
 # |                                    django.contrib.messages                                     |
@@ -207,7 +204,19 @@ AWS_REGION = 'us-west-2'
 AWS_S3_ADDRESSING_STYLE = 'auto'
 AWS_S3_BUCKET_AUTH = False
 AWS_S3_BUCKET_NAME = 'quizwhiz.io'
+AWS_S3_CUSTOM_DOMAIN = "{bucket}.s3.amazonaws.com".format(bucket=AWS_S3_BUCKET_NAME)
 AWS_S3_GZIP = True
+
+# +------------------------------------------------------------------------------------------------+
+# |                                                                                                |
+# |                              django media storage settings                                     |
+# |                                                                                                |
+# +------------------------------------------------------------------------------------------------+
+
+# This comes after 'boto' because it depends on AWS_S3_CUSTOM_DOMAIN
+DEFAULT_FILE_STORAGE = 'django_s3_storage.storage.S3Storage'
+MEDIA_URL = "//{media_domain}/".format(media_domain=AWS_S3_CUSTOM_DOMAIN)
+
 # +------------------------------------------------------------------------------------------------+
 # |                                                                                                |
 # |                                          quizard                                               |
