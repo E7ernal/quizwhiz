@@ -1,5 +1,5 @@
 /home/{{ app_name }}/logs/gunicorn_supervisor.log {
-  nocreate
+  create 0644 root root
   rotate 4
   weekly
   compress
