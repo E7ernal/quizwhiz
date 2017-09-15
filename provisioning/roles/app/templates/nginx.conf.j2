@@ -12,7 +12,7 @@ server {
 }
 
 server {
-  listen 80;
+  listen 80 default;
   client_max_body_size 256M;
   server_name
 {% for name in app_nginx_server_names %}
