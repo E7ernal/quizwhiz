@@ -1,0 +1,26 @@
+/home/{{ app_name }}/logs/gunicorn_supervisor.log {
+  nocreate
+  rotate 4
+  weekly
+  compress
+  missingok
+  notifempty
+}
+
+/home/{{ app_name }}/logs/django.log {
+  create 0644 {{ app_name }} {{ app_name }}
+  rotate 4
+  weekly
+  compress
+  missingok
+  notifempty
+}
+
+/home/{{ app_name }}/logs/nginx*log {
+  create 0644 www-data root
+  rotate 4
+  weekly
+  compress
+  missingok
+  notifempty
+}
