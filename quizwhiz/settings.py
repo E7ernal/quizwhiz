@@ -214,3 +214,17 @@ try:
     from local_settings import *
 except ImportError as e:
     print e
+
+# Add the EC2 instance's private IPv4 address to ALLOWED_HOSTS
+# so that health checks from the ALB will succeed.
+import requests
+
+# Amazon maintains a REST API for retrieving instance metadata.
+response = requests.get('http://169.254.169.254/latest/meta-data/local-ipv4')
+
+# If the response isn't 200, maybe the server wasn't provisioned with AWS?
+# Anyways, the request wasn't successful, so don't do anything with the response.
+if response.status_code == 200:
+    ALLOWED_HOSTS.append(response.text)
+
+

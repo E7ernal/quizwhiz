@@ -1,3 +1,7 @@
+log_format access '$remote_addr ($http_x_forwarded_for) - $remote_user [$time_local] '
+                  '$http_host "$request" $status $bytes_sent '
+                  '"$http_referer" "http_user_agent" "$request_time"';
+
 upstream {{ app_name }}_server {
   server unix:/home/{{ app_name }}/run/gunicorn.sock fail_timeout=0;
 }
@@ -11,7 +15,7 @@ server {
 
 {% endfor %}
 
-  access_log /home/{{ app_name }}/logs/nginx.access.log;
+  access_log /home/{{ app_name }}/logs/nginx.access.log access;
   error_log /home/{{ app_name }}/logs/nginx.error.log info;
 
   location /static {
