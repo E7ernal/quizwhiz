@@ -29,6 +29,8 @@ group_extra_settings:
   - {key: 'EMAIL_HOST_PASSWORD', value: "{{ vault_aws_secret_access_key }}"}
   - {key: 'AWS_ACCESS_KEY_ID', value: "{{ vault_aws_access_key_id }}"}
   - {key: 'AWS_SECRET_ACCESS_KEY', value: "{{ vault_aws_secret_access_key }}"}
+  - {key: 'AWS_S3_PUBLIC_URL', value: "'//cdn.quizwhiz.io'"}
+  - {key: 'MEDIA_URL', value: "AWS_S3_PUBLIC_URL"}
 
 group_apt_dependencies: []
 group_supervisor_tasks: []
