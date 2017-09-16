@@ -9,7 +9,7 @@ from django.shortcuts import redirect
 from django.template.loader import get_template
 from django.utils.translation import ugettext_lazy as _
 
-from quizard.utils import send_mail
+from email_utils.tasks import send_mail
 from quizard.models.Assignment import Assignment
 
 
@@ -114,21 +114,11 @@ class Results(generic.DetailView):
 
         subject = _("{assignment.code} results -- {assignee_name}").format(**context)
 
-        # Make a bona fide attempt to figure out who this email
-        # is supposed to go to.
-        if isinstance(to_address, list) or isinstance(to_address, tuple):
-            to_address_list = to_address
-        else:
-            try:
-                to_address_list = to_address.split(',')
-            except AttributeError:
-                return None
-
-        return send_mail(
+        return send_mail.apply_async((
             subject,
             template_instance.render(context),
             settings.DEFAULT_FROM_EMAIL,
-            to_address_list
-        )
+            to_address
+        ))
 
 

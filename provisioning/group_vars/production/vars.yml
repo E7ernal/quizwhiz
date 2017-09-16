@@ -23,6 +23,8 @@ app_db_name: "quizwhiz_django"
 app_db_host: "localhost"
 app_db_password: "{{ vault_app_db_password }}"
 
+app_queue_prefix: "'quizwhiz-celery-'"
+
 group_extra_settings:
   - {key: 'SECRET_KEY', value: "{{ vault_django_secret_key }}"}
   - {key: 'EMAIL_HOST_USER', value: "{{ vault_aws_ses_username }}"}
@@ -31,6 +33,11 @@ group_extra_settings:
   - {key: 'AWS_SECRET_ACCESS_KEY', value: "{{ vault_aws_secret_access_key }}"}
   - {key: 'AWS_S3_PUBLIC_URL', value: "'//cdn.quizwhiz.io'"}
   - {key: 'MEDIA_URL', value: "AWS_S3_PUBLIC_URL + '/'"}
+  - {key: 'CELERY_BROKER_TRANSPORT_OPTIONS', value: "{
+      'region': 'us-west-2',
+      'queue_name_prefix': {{ app_queue_prefix }}
+    }"}
+  - {key: 'CELERY_RESULT_BACKEND', value: "'django-db'"}
 
 group_apt_dependencies: []
 group_supervisor_tasks: []

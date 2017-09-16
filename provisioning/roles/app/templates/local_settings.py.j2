@@ -1,6 +1,6 @@
 # vim: ts=4:sw=4:expandtabs
 
-import os
+import os, urllib
 
 __author__ = '{{ lookup('env', 'SETTINGS_AUTHOR') | default('zach.mott@gmail.com') }}'
 
@@ -56,6 +56,11 @@ FILER_STORAGES = {
         }
     }
 }
+
+CELERY_BROKER_URL = "sqs://{aws_access_key_id}:{aws_secret_access_key}@".format(
+    aws_access_key_id=urllib.quote({{ vault_aws_access_key_id }}, safe=''),
+    aws_secret_access_key=urllib.quote({{ vault_aws_secret_access_key }}, safe=''),
+)
 
 {% for item in group_extra_settings %}
 {{ item.key }} = {{ item.value }}

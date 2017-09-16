@@ -7,3 +7,11 @@ user = {{ app_name }}                                                 ; User to 
 stdout_logfile = /home/{{ app_name }}/logs/gunicorn_supervisor.log    ; Where to write log messages
 redirect_stderr = true                                                ; Save stderr in the same log
 environment=LANG=en_US.UTF-8,LC_ALL=en_US.UTF-8                       ; Set UTF-8 as default encoding
+
+{% if install_celery is defined and install_celery %}
+[program:celery]
+command = {{ virtualenv_path }}/bin/celery worker -A quizwhiz.celery_app -l INFO
+user = {{ app_name }}
+stdout_logfile = /home/{{ app_name }}/logs/worker.log
+redirect_stderr = true
+{% endif %}

@@ -24,7 +24,6 @@ SECRET_KEY = 'asupersecretquizwhizsecretwith&%!characters'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -45,6 +44,8 @@ INSTALLED_APPS = [
     'gfklookupwidget',
     'widget_tweaks',
     'django_s3_storage',
+    'email_utils',
+    'django_celery_results',
 
     'quizard',
 ]
@@ -208,6 +209,16 @@ AWS_S3_GZIP = True
 
 # +------------------------------------------------------------------------------------------------+
 # |                                                                                                |
+# |                                           celery                                               |
+# |                                                                                                |
+# +------------------------------------------------------------------------------------------------+
+
+# CELERY_BROKER_URL = 'Define me in local_settings.py.'
+# CELERY_RESULT_BACKEND = 'Define me in local_settings.py.'
+CELERY_SEND_TASK_ERROR_EMAILS = True
+
+# +------------------------------------------------------------------------------------------------+
+# |                                                                                                |
 # |                                          quizard                                               |
 # |                                                                                                |
 # +------------------------------------------------------------------------------------------------+
@@ -235,11 +246,15 @@ except ImportError as e:
 import requests
 
 # Amazon maintains a REST API for retrieving instance metadata.
-response = requests.get('http://169.254.169.254/latest/meta-data/local-ipv4')
-
-# If the response isn't 200, maybe the server wasn't provisioned with AWS?
-# Anyways, the request wasn't successful, so don't do anything with the response.
-if response.status_code == 200:
-    ALLOWED_HOSTS.append(response.text)
+try:
+    response = requests.get('http://169.254.169.254/latest/meta-data/local-ipv4')
+except requests.exceptions.ConnectionError:
+    # If can't connect to the remote host, we're probably in a dev environment.
+    pass
+else:
+    # If the response isn't 200, maybe the server wasn't provisioned with AWS?
+    # Anyways, the request wasn't successful, so don't do anything with the response.
+    if response.status_code == 200:
+        ALLOWED_HOSTS.append(response.text)
 
 
