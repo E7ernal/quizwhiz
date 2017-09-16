@@ -23,7 +23,7 @@ app_db_name: "quizwhiz_django"
 app_db_host: "localhost"
 app_db_password: "{{ vault_app_db_password }}"
 
-app_queue_prefix: "'quizwhiz-celery-'"
+app_queue_prefix: "'quizwhiz-'"
 
 group_extra_settings:
   - {key: 'SECRET_KEY', value: "{{ vault_django_secret_key }}"}

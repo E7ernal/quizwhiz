@@ -1,5 +1,5 @@
 [group:{{ app_name }}]
-programs=gunicorn
+programs=gunicorn{% if install_celery is defined and install_celery %},celery{% endif %}
 
 [program:gunicorn]
 command = /home/{{ app_name }}/gunicorn_start.sh                      ; Command to start app
