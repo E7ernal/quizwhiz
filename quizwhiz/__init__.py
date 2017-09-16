@@ -11,7 +11,6 @@ __all__ = ['celery_app']
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'quizwhiz.settings')
 
-
 celery_app = Celery('quizwhiz')
 celery_app.config_from_object('django.conf:settings', namespace='CELERY')
 
