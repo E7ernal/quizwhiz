@@ -84,6 +84,10 @@ class Results(generic.DetailView):
         self._send_email(
             assignment,
             assignment.created_by.email,
+            _("{assignment.code} results -- {assignee_name}").format(
+                assignment=assignment,
+                assignee_name=self.request.session['assignee_name'],
+            ),
             'quizard/emails/assignment_results.txt'
         )
 
@@ -95,10 +99,14 @@ class Results(generic.DetailView):
             self._send_email(
                 assignment,
                 self.request.session['assignee_email'],
+                _("{assignment.code} summary -- {assignee_name}").format(
+                    assignment=assignment,
+                    assignee_name=self.request.session['assignee_name']
+                ),
                 'quizard/emails/assignment_results_summary.txt'
             )
 
-    def _send_email(self, assignment, to_address, email_template):
+    def _send_email(self, assignment, to_address, subject, email_template):
         template_instance = get_template(email_template)
         context = {
             'assignment': assignment,
@@ -112,13 +120,18 @@ class Results(generic.DetailView):
             'BRAND_NAME': settings.BRAND_NAME
         }
 
-        subject = _("{assignment.code} results -- {assignee_name}").format(**context)
-
-        return send_mail.apply_async((
+        args = (
             subject,
             template_instance.render(context),
             settings.DEFAULT_FROM_EMAIL,
             to_address
-        ))
+        )
+
+        # Don't try to invoke the task asynchronously in DEBUG mode,
+        # because it's a dev environment and celery probably isn't configured.
+        if settings.DEBUG:
+            return send_mail(*args)
+        else:
+            return send_mail.apply_async(args)
 
 

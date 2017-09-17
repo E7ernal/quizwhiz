@@ -3,6 +3,7 @@
 __author__ = 'zach.mott@gmail.com'
 
 from django.db import models
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from email_utils.tasks import send_mail
@@ -10,6 +11,7 @@ from email_utils.tasks import send_mail
 RESEND_EMAIL_PERMISSION = 'can_resend_email'
 
 
+@python_2_unicode_compatible
 class EmailMessage(models.Model):
     RESEND_EMAIL_PERMISSION = RESEND_EMAIL_PERMISSION
 
@@ -31,6 +33,9 @@ class EmailMessage(models.Model):
         permissions = [
             (RESEND_EMAIL_PERMISSION, _('Can resend email')),
         ]
+
+    def __str__(self):
+        return "{self.date_sent:%Y-%m-%d %H:%M:%S} - {self.subject}".format(self=self)
 
     def resend(self):
         send_mail.apply_async((

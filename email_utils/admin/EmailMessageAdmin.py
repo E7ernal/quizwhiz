@@ -9,6 +9,8 @@ from email_utils.models import EmailMessage
 
 
 class EmailMessageAdmin(admin.ModelAdmin):
+    search_fields = ['to', 'subject']
+
     list_display = ['subject', 'to', 'from_address', 'delivery_successful', 'date_sent']
     list_filter = ['delivery_successful', 'date_sent']
 
