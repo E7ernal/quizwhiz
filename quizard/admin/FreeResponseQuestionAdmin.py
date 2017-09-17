@@ -4,14 +4,14 @@ __author__ = 'zach.mott@gmail.com'
 
 
 from django.contrib import admin
-from django.utils.translation import ugettext_lazy as _
 
+from quizard.admin import ViewOnlyMixin
 from quizard.models import FreeResponseAnswer, FreeResponseQuestion
 
 from AbstractBaseAdmin import AbstractBaseAdmin
 
 
-class FreeResponseAnswerInline(admin.TabularInline):
+class FreeResponseAnswerInline(ViewOnlyMixin, admin.TabularInline):
     model = FreeResponseAnswer
     extra = 0
     min_num = 0
@@ -19,7 +19,7 @@ class FreeResponseAnswerInline(admin.TabularInline):
     fields = ['value']
 
 
-class FreeResponseQuestionAdmin(AbstractBaseAdmin):
+class FreeResponseQuestionAdmin(ViewOnlyMixin, AbstractBaseAdmin):
     inlines = [FreeResponseAnswerInline]
 
     list_filter = ['created']
@@ -32,6 +32,13 @@ class FreeResponseQuestionAdmin(AbstractBaseAdmin):
         })
     ] + AbstractBaseAdmin.fieldsets
 
-    prepopulated_fields = {'slug': ('title',)}
+    def get_prepopulated_fields(self, request, obj=None):
+        supercall = super(FreeResponseQuestionAdmin, self).get_prepopulated_fields
+        prepopulated_fields = supercall(request, obj=obj)
+
+        if request.user.is_superuser or (obj and obj.created_by == request.user):
+            prepopulated_fields['slug'] = ('title',)
+
+        return prepopulated_fields
 
 

@@ -2,4 +2,4 @@
 
 __author__ = 'zach.mott@gmail.com'
 
-default_app_config = 'quizard.apps.QuizardConfig'
+from ViewOnlyMixin import ViewOnlyMixin

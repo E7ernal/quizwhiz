@@ -6,12 +6,13 @@ __author__ = 'zach.mott@gmail.com'
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
+from quizard.admin import ViewOnlyMixin
 from quizard.models import Assignment, AssignmentQuestion
 
 from AbstractBaseAdmin import AbstractBaseAdmin
 
 
-class AssignmentQuestionInline(admin.TabularInline):
+class AssignmentQuestionInline(ViewOnlyMixin, admin.TabularInline):
     model = AssignmentQuestion
     extra = 0
     min_num = 0
@@ -19,7 +20,7 @@ class AssignmentQuestionInline(admin.TabularInline):
     fields = ['index', 'question_type', 'question_id']
 
 
-class AssignmentAdmin(AbstractBaseAdmin):
+class AssignmentAdmin(ViewOnlyMixin, AbstractBaseAdmin):
     inlines = [AssignmentQuestionInline]
 
     save_as = True

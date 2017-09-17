@@ -5,6 +5,8 @@ __author__ = 'zach.mott@gmail.com'
 
 from django.contrib import admin
 
+from quizard.admin.mixins.ViewOnlyMixin import ViewOnlyMixin
+
 from AssignmentAdmin import Assignment, AssignmentAdmin
 from FreeResponseQuestionAdmin import FreeResponseQuestion, FreeResponseQuestionAdmin
 from MultipleChoiceQuestionAdmin import MultipleChoiceQuestion, MultipleChoiceQuestionAdmin
