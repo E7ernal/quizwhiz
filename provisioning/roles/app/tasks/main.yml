@@ -216,7 +216,7 @@
     dest: '{{ app_root }}/{{ app_name }}/local_settings.py'
     owner: '{{ app_name }}'
     group: '{{ app_group }}'
-    mode: 0644
+    mode: 0600
     backup: yes
   become: yes
   notify:
