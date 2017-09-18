@@ -3,7 +3,9 @@
 __author__ = 'zach.mott@gmail.com'
 
 
+from django import forms
 from django.contrib import admin
+from django.utils.translation import ugettext_lazy as _
 
 from quizard.admin import ViewOnlyMixin
 from quizard.models import FreeResponseAnswer, FreeResponseQuestion
@@ -11,12 +13,30 @@ from quizard.models import FreeResponseAnswer, FreeResponseQuestion
 from AbstractBaseAdmin import AbstractBaseAdmin
 
 
+class FreeResponseAnswerFormset(forms.models.BaseInlineFormSet):
+    def clean(self):
+        clean_result = super(FreeResponseAnswerFormset, self).clean()
+
+        value_list = [form.cleaned_data['value'].lower() for form in self.forms]
+        value_set = set(value_list)
+
+        # If there are fewer items in the value set than there are in
+        # the value list, some of the answers were duplicated.
+        if len(value_set) < len(value_list):
+            raise forms.ValidationError(_('Answer values must be unique '
+                                          'on a case-insensitive basis.'))
+
+        return clean_result
+
+
 class FreeResponseAnswerInline(ViewOnlyMixin, admin.TabularInline):
     model = FreeResponseAnswer
+    formset = FreeResponseAnswerFormset
     extra = 0
     min_num = 0
 
-    fields = ['value']
+    fields = ['value', 'case_sensitive']
+    prepopulated_fields = {}  # Prevents inline from using its parent's prepopulated_fields.
 
 
 class FreeResponseQuestionAdmin(ViewOnlyMixin, AbstractBaseAdmin):

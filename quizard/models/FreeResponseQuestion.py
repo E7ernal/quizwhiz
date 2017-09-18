@@ -16,4 +16,11 @@ class FreeResponseQuestion(BaseQuestion):
         verbose_name_plural = _('Free response questions')
 
     def validate_answer(self, answer):
-        return self.answers.filter(value=answer.strip()).exists()
+        case_sensitive = self.answers.filter(value=answer.strip()).exists()
+        case_insensitive = self.answers.filter(
+            value__iexact=answer.strip(),
+            case_sensitive=False
+        ).exists()
+
+        return case_sensitive or case_insensitive
+

@@ -18,6 +18,7 @@ class FreeResponseAnswer(AbstractBase):
     )
 
     value = models.CharField(_('Answer value'), max_length=255)
+    case_sensitive = models.BooleanField(default=True)
 
     class Meta:
         verbose_name = _('Free response answer')
